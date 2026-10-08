@@ -9,7 +9,7 @@ This project is an **Institutional-Grade Structured Finance Surveillance Platfor
 ---
 
 ## 📊 Dashboard Preview & Scenario Analysis
-*(A typical stress scenario: Applying a 10% CDR and 40% Recovery Rate to observe the Overcollateralization depletion)*
+*(A typical stress scenario: Applying a 10% CDR and 30% Recovery Rate to observe the Overcollateralization depletion)*
 
 ![Dashboard Screenshot](dashboard_screenshot.png) 
 *(See instructions below on how to test the live engine)*
