@@ -1,61 +1,75 @@
 # 🏦 Multi-Seller ABCP Conduit & Auto ABS Digital Twin
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-red?logo=streamlit)](#) *(Click here to view the live dashboard: https://jeremy-abcp.streamlit.app/)*
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-red?logo=streamlit)](https://jeremy-abcp.streamlit.app/) 
+*(Click the badge above to view the live interactive dashboard)*
 
 ## 📌 Executive Summary
-This project is an **Institutional-Grade Structured Finance Surveillance Platform**. It acts as a "Digital Twin" for a public Auto Asset-Backed Securities (ABS) transaction, designed to bridge the gap between asset-level collateral performance and liability-level liquidity risk for ABCP conduit sponsors.
+This project is an **Institutional-Grade Structured Finance Surveillance Platform**. It acts as a "Digital Twin" for a public Auto Asset-Backed Securities (ABS) transaction. By programmatically ingesting regulatory filings from the **SEC EDGAR database**, the engine allows credit analysts and structurers to simulate macroeconomic shocks and forecast structural trigger breaches.
 
-By programmatically ingesting regulatory filings from the **SEC EDGAR database**, the engine allows structurers, risk managers, and rating agency analysts to simulate macroeconomic shocks and forecast liquidity facility drawdowns.
+---
 
-## 🎯 Business Objective & Impact
-In the structured credit market, an ABCP SPV funds long-term assets (like auto loans) with short-term liabilities (Commercial Paper). 
-This platform answers the critical desk question: 
-> *"At what level of collateral deterioration do structural covenants (triggers) breach, causing a CP issuance freeze and forcing the Sponsor Bank to draw on its backup Liquidity Facility?"*
+## 📊 Dashboard Preview & Scenario Analysis
+*(A typical stress scenario: Applying a 10% CDR and 40% Recovery Rate to observe the Overcollateralization depletion)*
+
+![Dashboard Screenshot](dashboard_screenshot.png) 
+*(See instructions below on how to test the live engine)*
+
+---
+
+## ⚖️ Data Lineage vs. Simulated Assumptions
+To ensure financial rigor, the platform strictly separates historical reported data from user-driven stress variables.
+
+**1. Real Market Data (Extracted from SEC EDGAR):**
+* **Current Pool Balance:** Derived from the `ABS-EE` (Asset Data) loan-level XML filings.
+* **Current Overcollateralization (OC) Ratio & Target OC:** Parsed from the most recent Trustee Distribution Report (`Form 10-D`).
+
+**2. User-Driven Stress Assumptions (Simulation):**
+* **CDR (Constant Default Rate):** Annualized percentage of the loan pool expected to default.
+* **CPR (Constant Prepayment Rate):** Speed of early principal repayments.
+* **Recovery Rate:** The percentage of defaulted balances recovered through vehicle liquidation.
+
+---
+
+## 🔬 Model Assumptions & Limitations
+While this engine models the core mechanics of an ABCP conduit funding an ABS pool, it relies on specific structural assumptions:
+* **Liquidity Facility Mechanics:** The model assumes that a breach of the Target OC triggers a "Stop-Issuance" or *Early Amortization Event*. For modeling purposes, we assume this event leads to a complete CP market freeze for the conduit, forcing a 100% draw on the Sponsor Bank's backup Liquidity Facility to retire maturing CP notes.
+* **Cash Flow Waterfall Simplification:** The stress engine dynamically adjusts the OC cushion based on net losses but does not fully route Yield/Excess Spread through the exact priority of payments (interest vs. principal waterfall) month-by-month.
+* **Static Capital Structure:** The capital structure (outstanding senior notes) is considered static at the reporting date for the immediate OC calculation.
+
+---
 
 ## ⚙️ Core Features & Architecture
+1. **Automated ETL Pipeline:** Connects to the SEC REST API, identifies the latest filings, and uses `xml.etree.ElementTree` for streaming parsing of heavy loan-level XML data without memory overload.
+2. **Stress-Testing Engine:** Instantly recalculates the OC ratio and net losses based on user inputs.
+3. **Early Warning System:** Flags structural covenant breaches when the stressed OC falls below the indenture's target.
 
-### 1. Automated SEC EDGAR Data Ingestion (ETL)
-* **Source:** Direct API connection to the U.S. Securities and Exchange Commission (SEC).
-* **Target Filings:** Extracts historical distribution metrics from Trustee Reports (`Form 10-D`) and processes loan-level XML metadata (`Form ABS-EE`).
-* **Output:** Establishes the exact *Current Pool Balance* and *Overcollateralization (OC)* baseline without manual data entry.
-
-### 2. Macro Stress-Testing Engine
-Users can apply real-time credit shocks to the collateral pool via the web interface:
-* **CDR (Constant Default Rate):** Annualized percentage of the loan pool expected to default.
-* **CPR (Constant Prepayment Rate):** Speed of early principal repayments, impacting the portfolio's Excess Spread generation.
-* **Recovery Rate:** The percentage of defaulted balances recovered through vehicle repossession and liquidation.
-
-### 3. Dynamic Covenant & Trigger Monitoring
-* **OC Target Tracking:** The engine continuously recalculates the Overcollateralization cushion against the structural target (e.g., 12.0%).
-* **Early Amortization Alerts:** If projected net losses deplete the OC cushion below the target, the platform signals a structural breach, simulating a Sequential Pay environment where cash flows are trapped to protect senior CP noteholders.
-
-## 🛠️ Technology Stack
-* **Language:** Python 3.9+
-* **Data Engineering:** `Requests` (REST API routing), `JSON`, `xml.etree.ElementTree` (Streaming parsing for heavy XML files to optimize RAM usage).
-* **Data Analysis:** `Pandas`
-* **Frontend / UI:** `Streamlit` (Interactive analytical dashboard)
+---
 
 ## 🚀 How to Run Locally
-If you wish to run the engine on your local machine rather than the cloud dashboard:
+If you wish to audit the code or run the engine on your local machine:
 
-1. Clone the repository:
+**1. Clone the repository:**
 ```bash
-git clone [https://github.com/YourUsername/abcp-surveillance-platform.git](https://github.com/YourUsername/abcp-surveillance-platform.git)
+git clone [https://github.com/Jaywiss-lab/abcp-surveillance-platform.git](https://github.com/Jaywiss-lab/abcp-surveillance-platform.git)
 cd abcp-surveillance-platform
-Install dependencies:
+```
 
+**2. Install dependencies:**
+```bash
 pip install -r requirements.txt
+```
 
-
-Run the ETL pipeline to fetch the latest SEC data:
-
+**3. Run the ETL pipeline to fetch the latest SEC data:
+```bash
 python etl_pipeline.py
+```
 
-
-Launch the Streamlit dashboard:
-
+**4. Launch the Streamlit dashboard:
+```bash
 streamlit run dashboard.py
+```
+
+Developed by Jeremy Cassagne | Designed for quantitative risk assessment in Structured Credit, Securitization, and Portfolio Surveillance.
 
 
 
-Developed by Jeremy Cassagne | Designed for quantitative risk assessment in Structured Credit & Securitization.
