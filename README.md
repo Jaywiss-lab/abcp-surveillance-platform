@@ -1,6 +1,6 @@
 # 🏦 Multi-Seller ABCP Conduit & Auto ABS Digital Twin
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-red?logo=streamlit)](https://jeremy-abcp.streamlit.app/) 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-red?logo=streamlit)] (https://jeremy-abcp.streamlit.app/) 
 *(Click the badge above to view the live interactive dashboard)*
 
 ## 📌 Executive Summary
