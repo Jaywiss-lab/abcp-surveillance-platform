@@ -44,20 +44,18 @@ git clone [https://github.com/YourUsername/abcp-surveillance-platform.git](https
 cd abcp-surveillance-platform
 Install dependencies:
 
-Bash
-
 pip install -r requirements.txt
+
 
 Run the ETL pipeline to fetch the latest SEC data:
 
-Bash
-
 python etl_pipeline.py
+
 
 Launch the Streamlit dashboard:
 
-Bash
-
 streamlit run dashboard.py
+
+
 
 Developed by Jeremy Cassagne | Designed for quantitative risk assessment in Structured Credit & Securitization.
