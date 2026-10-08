@@ -59,12 +59,12 @@ cd abcp-surveillance-platform
 pip install -r requirements.txt
 ```
 
-**3. Run the ETL pipeline to fetch the latest SEC data:
+**3. Run the ETL pipeline to fetch the latest SEC data:**
 ```bash
 python etl_pipeline.py
 ```
 
-**4. Launch the Streamlit dashboard:
+**4. Launch the Streamlit dashboard:**
 ```bash
 streamlit run dashboard.py
 ```
