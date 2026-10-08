@@ -86,9 +86,23 @@ if df_filings is not None:
         st.error("⚠️ Data pipeline not synced. Please run etl_pipeline.py first.")
         st.stop()
     
+  # MOTEUR DE STRESS (Horizon 12 mois)
+    # 1. Calcul des défauts et pertes
     projected_gross_losses = base_pool_balance * (cdr_shock / 100)
     projected_net_losses = projected_gross_losses * (1 - (recovery_rate / 100))
-    stressed_oc = base_oc_ratio - ((projected_net_losses / base_pool_balance) * 100)
+    
+    # 2. Impact du CPR sur l'amortissement du collatéral
+    # Les remboursements anticipés réduisent l'encours global sur l'année
+    projected_prepayments = base_pool_balance * (cpr_shock / 100)
+    
+    # 3. Recalcul dynamique de l'OC
+    # Hypothèse du modèle : Le passif (Notes) s'amortit au prorata des remboursements (CPR), 
+    # mais absorbe la totalité des pertes nettes, érodant le matelas d'OC.
+    projected_pool_balance = base_pool_balance - projected_prepayments - projected_gross_losses
+    base_liabilities = base_pool_balance * (1 - (base_oc_ratio / 100))
+    projected_liabilities = base_liabilities - projected_prepayments
+    
+    stressed_oc = ((projected_pool_balance - projected_liabilities) / projected_pool_balance) * 100
     
     col1, col2 = st.columns([2, 1.2])
     
@@ -130,7 +144,7 @@ if df_filings is not None:
         
         if stressed_oc < target_oc:
             st.error(f"**OC Target Breach!** Stressed OC ({stressed_oc:.2f}%) fell below target ({target_oc}%).")
-            st.warning("**Liquidity Alert**: ABCP sponsor facility draw probability increased due to stop-issuance triggers.")
+            st.warning("**Early Amortization Scenario**: Assuming standard conduit documentation, a CP issuance freeze occurs. The SPV may be forced to draw on the Sponsor's Liquidity Facility, subject to asset eligibility criteria.")
         else:
             st.success(f"**OC Target Intact.** Cushion remaining: {stressed_oc - target_oc:.2f}%")
 

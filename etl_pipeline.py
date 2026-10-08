@@ -71,16 +71,22 @@ def run_pipeline():
     
     # 5. Sauvegarde dans une base de données légère (JSON) pour le Dashboard
     metrics = {
+        "metadata": {
+            "source_url": xml_url,
+            "form_type": "ABS-EE",
+            "extraction_method": "Asset Data mapping (Prototype)",
+            "data_status": "Reported / Baseline Simulation"
+        },
         "report_date": report_date,
         "current_pool_balance": extracted_pool_balance,
         "delinquency_ratio": extracted_60d_delinquency,
-        "target_oc": 12.0,
-        "current_oc": 13.1
+        "current_oc": 13.1,
+        "target_oc": 12.0
     }
-    
-    with open("live_metrics.json", "w") as f:
-        json.dump(metrics, f, indent=4)
         
+    with open("live_metrics.json", "w") as f:
+            json.dump(metrics, f, indent=4)
+            
     print("✅ Pipeline terminé. Le fichier 'live_metrics.json' a été généré avec succès pour le Dashboard.")
 
 if __name__ == "__main__":
